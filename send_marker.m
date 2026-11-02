@@ -1,16 +1,17 @@
-function send_marker(event_code, event_name, timestamp, ~, marker_cfg)
-%SEND_MARKER 通过并口发送 EEG marker。
-%   按 test.m 的硬件流程发码：outp(address, code) -> 短脉冲 -> outp(address, 0)。
+function send_marker(event_code, event_name, timestamp, marker_cfg)
+%SEND_MARKER 初始化 IO64 并发送一个短并口脉冲。
 
-event_code = round(double(event_code));
-persistent io_ready address pulse_width_sec
-
+persistent io_obj io_ready address pulse_width_sec
 if isempty(io_ready)
     address = hex2dec(char(marker_cfg.parallel_port_address));
     pulse_width_sec = double(marker_cfg.pulse_width_sec);
 
     try
-        config_io();
+        io_obj = io64();
+        status = io64(io_obj);
+        if status ~= 0
+            error('IO64:InitializationFailed', 'Could not initialize the parallel-port driver.');
+        end
         io_ready = true;
     catch ME
         warning('MarkerWarning:IOUnavailable', ...
@@ -24,8 +25,7 @@ if ~io_ready
     return;
 end
 
-outp(address, event_code);
+io64(io_obj, address, round(double(event_code)));
 WaitSecs(pulse_width_sec);
-outp(address, 0);
-
+io64(io_obj, address, 0);
 end
