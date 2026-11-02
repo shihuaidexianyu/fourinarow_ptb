@@ -42,6 +42,19 @@ run_game;
 - 加载 `app/load_config.m`
 - 进入主循环 `app/main_loop.m`
 
+## 程序流程
+
+1. `app/run_game.m` 加载设置并启动实验。
+2. `app/main_loop.m` 打开 PTB 窗口，显示开始页。
+3. 每局先显示注视点，再开始对弈。
+4. 人类用方向键选格、确认落子；电脑策略从 `config.agent.player_fn` 读取。
+5. `core/apply_action.m` 更新棋盘并判断胜负。
+6. 程序在响应和棋盘呈现时发送对应 marker，同时记录动作与时间。
+7. 显示结果页并保存本局 `.mat` 日志，然后进入下一局或退出。
+
+游戏规则集中在 `core/`，PTB 绘图集中在 `ui_ptb/`，按键输入在
+`players/human_keyboard_player_play.m`，trigger 事件和发码分别在 `markers/`。
+
 ---
 
 ## 按键配置（统一在 config）
@@ -94,9 +107,13 @@ debug_key_name_probe
 - `config.ui.*`：文本提示、结果页停留时长、注视点参数
 - `config.timing.*`：注视点时长、ITI、按键释放保护
 - `config.controls.*`：键盘 keycode
-- `config.marker.*`：是否启用 marker、并口地址、脉冲宽度、回调
+- `config.marker.*`：是否启用 marker、并口地址、脉冲宽度
 - `config.agent.*`：agent 函数入口与延时
 - `config.logging.*`：日志保存开关与目录
+
+若要更换电脑策略，将 `app/load_config.m` 中的
+`config.agent.player_fn` 设为新函数句柄。该函数接收当前局面 `obs`，并返回
+带有 `row`、`col` 字段的落子位置。
 
 ---
 
@@ -146,7 +163,6 @@ fourinarow_ptb/ (repository root)
     is_valid_action.m
     apply_action.m
     check_winner.m
-    check_draw.m
 
   players/
     human_keyboard_player_play.m

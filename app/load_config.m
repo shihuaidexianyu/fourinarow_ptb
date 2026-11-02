@@ -29,8 +29,7 @@ else
     config.display.screen_index = 0;                     % 延迟到运行期再校验 PTB
 end
 config.display.fullscreen = true;                    % 是否全屏
-config.display.ptb_skip_sync_tests = true;           % 是否跳过 PTB 同步测试（开发机默认 true，正式实验建议改回 false）
-config.display.ptb_vbl_timestamping_mode = [];       % PTB VBLTimestampingMode（空=使用 PTB 默认）
+config.display.ptb_skip_sync_tests = true;           % 正式实验时建议改为 false
 
 % ---- 界面文本 ----
 config.ui.illegal_message_duration_sec = 0.8;       % 非法动作提示时长（秒）
@@ -40,7 +39,6 @@ config.ui.instruction_text = ['实验说明：\n' ...
     '2) 使用确认键落子\n' ...
     '3) 共进行固定试次，对局将自动推进\n' ...
     '4) 按 ESC 可中止实验'];
-config.ui.show_config_summary = true;               % 开始页是否显示配置摘要
 config.ui.turn_black_text = '轮到：黑方';
 config.ui.turn_white_text = '轮到：白方';
 config.ui.illegal_text = '非法动作，请重试';
@@ -56,8 +54,8 @@ config.ui.fixation_thickness_deg = 0.08;            % 注视点线宽视角（�
 
 % ---- 时序配置 ----
 config.timing.pre_trial_fixation_sec = 0.8;         % 每局开始前注视点时长（秒）
-config.timing.inter_trial_interval_sec = 0.0;       % 局间间隔（秒）:在结果页停留时间基础上额外增加的间隔
-config.timing.key_release_guard_sec = 0.15;         % 防连按释放等待上限（秒）:用于过滤过快的连续按键，避免误操作被识别为多次输入
+config.timing.inter_trial_interval_sec = 0.0;       % 结果页之后额外等待的时间
+config.timing.key_release_guard_sec = 0.15;         % 等待按键释放，避免按键残留
 
 % ---- 键盘交互配置（硬编码 keycode，统一在 config 管理） ----
 KbName('UnifyKeyNames');
@@ -73,16 +71,14 @@ config.marker.enable = false;                        % 是否启用 marker
 config.marker.enable_illegal_click_marker = true;   % 非法点击是否打 marker
 config.marker.parallel_port_address = '0FF8';       % 并口地址（十六进制字符串）
 config.marker.pulse_width_sec = 0.004;              % 脉冲宽度（秒）
-config.marker.callback = @(event_code, event_name, timestamp, payload) ...
-    send_marker(event_code, event_name, timestamp, payload, config.marker); % marker 回调函数（并口发码）
 
 % ---- Agent ----
-config.agent.player_fn = @random_agent_play;        % 可替换 agent：函数句柄或函数名字符串
-config.agent.move_delay_sec = 0.0;                  % 电脑落子后额外延迟（秒）:推荐在agent内部实现更自然的思考时间，此处为全局额外延迟。
+config.agent.player_fn = @random_agent_play;        % 电脑策略；函数接收 obs 并返回 action
+config.agent.move_delay_sec = 0.0;                  % 电脑落子前的额外等待时间（秒）
 
 % ---- 日志 ----
 config.logging.enable = true;
-config.logging.save_dir = 'logs';                   % 日志保存目录（相对路径，run_game 会转为绝对）
+config.logging.save_dir = 'logs';                   % 日志目录；run_game 会转为绝对路径
 
 % ---- 事件码映射表 ----
 config.events = marker_name_to_code();

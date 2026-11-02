@@ -6,10 +6,6 @@ PsychDefaultSetup(2);                                   % 归一化颜色范围�
 KbName('UnifyKeyNames');                                % 统一跨平台键名映射
 Screen('Preference', 'SkipSyncTests', double(logical(config.display.ptb_skip_sync_tests)));
 
-if ~isempty(config.display.ptb_vbl_timestamping_mode)
-    Screen('Preference', 'VBLTimestampingMode', config.display.ptb_vbl_timestamping_mode);
-end
-
 Screen('Preference', 'TextRenderer', 1);                % 启用高质量渲染器，支持 CJK
 
 % ---- 颜色定义（归一化 RGB）----
@@ -43,10 +39,6 @@ ui.colors.black = black;
 ui.colors.grid = line_col;
 ui.colors.highlight = accent;
 ui.colors.text = [0.04, 0.04, 0.04];
-
-ui.button_style.fill   = [0.82, 0.82, 0.82];    % 按钮填充色
-ui.button_style.border = [0.2, 0.2, 0.2];        % 按钮边框色
-ui.button_style.text   = [0.08, 0.08, 0.08];     % 按钮文字色
 
 Priority(MaxPriority(win));   % 提升进程优先级以减少时序抖动
 end

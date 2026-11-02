@@ -1,7 +1,6 @@
 function [is_win, winning_cells, winning_line] = check_winner(state, action)
-%CHECK_WINNER 围绕最新落子检查四个方向是否形成连线。
-%   若连续长度 >= connect_n，返回整段连续棋子坐标。
-%   若多个方向均满足，返回最长的一条。
+%CHECK_WINNER 只需围绕最新落子检查四个方向是否连成足够的棋子。
+%   返回胜利格坐标和连线两端；没有获胜时返回空坐标。
 
 board = state.board;
 row0 = action.row;

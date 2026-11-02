@@ -1,4 +1,4 @@
-function [next_state, apply_info] = apply_action(state, action)
+function next_state = apply_action(state, action)
 %APPLY_ACTION 应用一步合法动作并更新终局标志。
 %   判定顺序：先检查胜利，再检查平局，否则切换玩家。
 
@@ -27,16 +27,12 @@ if is_win
     end
     next_state.winning_cells = winning_cells;
     next_state.winning_line = winning_line;
-    apply_info.is_win = true;
-    apply_info.is_draw = false;
-    apply_info.result = next_state.result;
-    apply_info.winning_cells = winning_cells;
-    apply_info.winning_line = winning_line;
     return;
 end
 
 % 2) 检查平局
-is_draw = check_draw(next_state);
+% 棋盘没有空格且无人获胜时，判为平局。
+is_draw = ~any(next_state.board(:) == 0);
 if is_draw
     next_state.game_over = true;
     next_state.result = 'draw';
@@ -45,9 +41,4 @@ else
     next_state.current_player = 3 - state.current_player;
 end
 
-apply_info.is_win = false;
-apply_info.is_draw = is_draw;
-apply_info.result = next_state.result;
-apply_info.winning_cells = next_state.winning_cells;
-apply_info.winning_line = next_state.winning_line;
 end

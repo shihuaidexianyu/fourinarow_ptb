@@ -1,23 +1,14 @@
-config_io;
-global cogent;
-if( cogent.io.status ~= 0 )
-   error('inp/outp installation failed');
+config_io();
+
+address = hex2dec('0FF8'); % 按设备管理器中的实际并口地址修改。
+
+% 每秒发送 1–100，单次脉冲持续 4 ms；按 Ctrl+C 可停止。
+for event_code = 1:100
+    WaitSecs(1);
+
+    outp(address, event_code);
+    WaitSecs(0.004);
+    outp(address, 0);
+
+    disp(event_code);
 end
-
-address = hex2dec('0FF8');
-%单引号内为并口地址， 需要根据个人电脑的实际地址添加。 打开设备管理器，找到并口，查看属性→资源 即可看到。
-
-%下方代码可以每秒发送一个mark， mark值从1开始逐次增加到100
-for i=1:100;
-WaitSecs(1);
-
-outp(address,i);
-WaitSecs(0.004);
-outp(address,0);
-
-disp(i);
-
-end
-
-
-%脚本运行后 按ctrl+c可中断程序

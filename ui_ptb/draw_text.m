@@ -1,4 +1,4 @@
-function [nx, ny, textbounds] = draw_text(win, text, x, y, color, varargin)
+function [nx, ny] = draw_text(win, text, x, y, color)
 %DRAW_TEXT 支持中文的文本绘制函数。
 %   使用 Screen('DrawText') 逐行渲染，避免 DrawFormattedText 对 CJK
 %   double 数组的字宽计算问题。支持 'center' 定位和 \n 多行文本。
@@ -47,7 +47,6 @@ end
 % ---- 逐行绘制 ----
 nx = 0;
 ny = start_y;
-textbounds = [inf, inf, -inf, -inf];
 
 for i = 1:n_lines
     cur_y = start_y + (i - 1) * step_h;
@@ -62,8 +61,6 @@ for i = 1:n_lines
 
     nx = cur_x + line_widths(i);
     ny = cur_y + single_h;
-    textbounds = [min(textbounds(1), cur_x), min(textbounds(2), cur_y), ...
-                  max(textbounds(3), nx), max(textbounds(4), ny)];
 end
 end
 

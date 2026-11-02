@@ -29,7 +29,7 @@ addpath(fullfile(pwd, 'hardware', 'io64'));
 run(fullfile(pwd, 'hardware', 'io64', 'test.m'));
 ```
 
-脚本会检查 `cogent.io.status`；成功后每秒发送一个事件码，按 Ctrl+C 中断。
+脚本会检查 IO64 初始化是否成功；成功后每秒发送一个事件码，按 Ctrl+C 中断。
 应在采集端核对收到的事件码及脉冲。
 
 ## 游戏中发码
@@ -39,6 +39,5 @@ run(fullfile(pwd, 'hardware', 'io64', 'test.m'));
 `app/run_game.m` 会自动将此硬件目录与其他程序目录加入 MATLAB 路径。
 游戏的事件名与码值映射保留在 `markers/marker_name_to_code.m`。
 
-此迁移未修改游戏、发码或驱动逻辑；MATLAB 文本统一了换行，原测试脚本的中文注释
-转为 UTF-8，两个二进制文件与原压缩包内容保持一致。尚未在实验机上运行游戏或验证
-实际并口输出。
+两个二进制文件与原压缩包内容保持一致；MATLAB 文件整理了缩进和注释。
+尚未在实验机上运行游戏或验证实际并口输出。

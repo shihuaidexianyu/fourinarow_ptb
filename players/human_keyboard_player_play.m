@@ -1,10 +1,9 @@
-function [action, meta, cursor] = human_keyboard_player_play(obs, player_config, runtime_context)
-%HUMAN_KEYBOARD_PLAYER_PLAY 人类键盘输入适配器。
-%   方向键移动选中格，确认键提交落子，ESC 中止。
+function [action, meta, cursor] = human_keyboard_player_play(obs, controls, runtime_context)
+%HUMAN_KEYBOARD_PLAYER_PLAY 方向键移动光标，确认键落子，ESC 中止。
 %   返回值：
-%     action  - 合法动作 struct(.row,.col)，非法或中止时为 []
-%     meta    - .aborted=true 表示 ESC 中止；.is_illegal=true 表示确认到已占用格
-%     cursor  - 本次输入结束后的光标位置 struct('row',r,'col',c)
+%     action - 落子位置；按 ESC 或确认已占用格时为空
+%     meta   - 说明空动作是中止还是非法输入
+%     cursor - 当前光标位置
 
 ui = runtime_context.ui;
 layout = runtime_context.layout;
@@ -16,7 +15,6 @@ action = [];
 meta = struct('aborted', false, 'is_illegal', false);
 cursor = runtime_context.cursor;
 
-keycodes = build_keycode_map(player_config);
 [~, ~, last_key_code] = KbCheck(-1);
 
 while true
@@ -27,10 +25,10 @@ while true
         continue;
     end
 
-    pressed_edge = key_code & ~last_key_code;
+    pressed_edge = key_code & ~last_key_code; % 只处理新按下的键，按住不会重复移动
 
     % ESC 中止
-    if any(pressed_edge(keycodes.abort))
+    if any(pressed_edge(controls.abort))
         meta.aborted = true;
         return;
     end
@@ -38,7 +36,7 @@ while true
     moved = false;
 
     % 确认落子
-    if any(pressed_edge(keycodes.confirm))
+    if any(pressed_edge(controls.confirm))
         row = cursor.row;
         col = cursor.col;
         if obs.board(row, col) == 0
@@ -54,16 +52,16 @@ while true
     end
 
     % 光标移动
-    if any(pressed_edge(keycodes.up))
+    if any(pressed_edge(controls.up))
         cursor.row = max(1, cursor.row - 1);
         moved = true;
-    elseif any(pressed_edge(keycodes.down))
+    elseif any(pressed_edge(controls.down))
         cursor.row = min(size(obs.board, 1), cursor.row + 1);
         moved = true;
-    elseif any(pressed_edge(keycodes.left))
+    elseif any(pressed_edge(controls.left))
         cursor.col = max(1, cursor.col - 1);
         moved = true;
-    elseif any(pressed_edge(keycodes.right))
+    elseif any(pressed_edge(controls.right))
         cursor.col = min(size(obs.board, 2), cursor.col + 1);
         moved = true;
     end
@@ -75,15 +73,4 @@ while true
     end
     last_key_code = key_code;
 end
-end
-
-function keycodes = build_keycode_map(controls)
-%BUILD_KEYCODE_MAP 从配置读取 PTB 键码索引数组。
-keycodes = struct();
-keycodes.up = controls.up;
-keycodes.down = controls.down;
-keycodes.left = controls.left;
-keycodes.right = controls.right;
-keycodes.confirm = controls.confirm;
-keycodes.abort = controls.abort;
 end

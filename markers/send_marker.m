@@ -10,7 +10,7 @@ if isempty(io_ready)
     pulse_width_sec = double(marker_cfg.pulse_width_sec);
 
     try
-        config_io;
+        config_io();
         io_ready = true;
     catch ME
         warning('MarkerWarning:IOUnavailable', ...

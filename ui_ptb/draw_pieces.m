@@ -41,15 +41,11 @@ if ~isempty(state.winning_cells)
 
     % 中心连线高亮
     if ~isempty(state.winning_line.start_row)
-        p0 = cell_center(layout, state.winning_line.start_row, state.winning_line.start_col);
-        p1 = cell_center(layout, state.winning_line.end_row,   state.winning_line.end_col);
+        rect0 = squeeze(layout.cell_rects(state.winning_line.start_row, state.winning_line.start_col, :))';
+        rect1 = squeeze(layout.cell_rects(state.winning_line.end_row, state.winning_line.end_col, :))';
+        p0 = [(rect0(1) + rect0(3)) / 2, (rect0(2) + rect0(4)) / 2];
+        p1 = [(rect1(1) + rect1(3)) / 2, (rect1(2) + rect1(4)) / 2];
         Screen('DrawLine', ui.win, ui.colors.highlight, p0(1), p0(2), p1(1), p1(2), 6);
     end
 end
-end
-
-function p = cell_center(layout, row, col)
-%CELL_CENTER 返回指定格子的屏幕中心坐标 [x, y]。
-rect = squeeze(layout.cell_rects(row, col, :))';
-p = [(rect(1)+rect(3))/2, (rect(2)+rect(4))/2];
 end

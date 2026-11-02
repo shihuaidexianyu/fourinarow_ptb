@@ -1,6 +1,5 @@
 function event_map = marker_name_to_code()
-%MARKER_NAME_TO_CODE 事件名 → 整数事件码的固定映射表。
-%   编号段约定：1xx=状态类, 2xx=人类行为, 3xx=agent行为, 4xx=视觉呈现, 5xx=结局
+%MARKER_NAME_TO_CODE 固定的事件名到事件码映射表。
 
 % eeg为8位输入端口，事件码范围为0-255，0通常用作复位信号，因此事件码从1开始编号。
 % 事件码的具体数值没有特殊意义，但必须保持一致以确保数据分析
