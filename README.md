@@ -32,7 +32,8 @@
 2. 运行：
 
 ```matlab
-app/run_game
+addpath('app');
+run_game;
 ```
 
 程序会自动：
@@ -104,6 +105,12 @@ debug_key_name_probe
 - 事件名与事件码映射：`markers/marker_name_to_code.m`
 - 统一发射入口：`markers/emit_marker.m`
 - 默认并口发送：`markers/send_marker.m`
+- 并口接口与独立 trigger 联调程序：`hardware/io64/`（见 [硬件说明](hardware/README.md)）
+
+原有配置默认 `config.marker.enable = false`。需要在游戏中发码时，在
+`app/load_config.m` 中启用 marker，并根据实验机设置并口地址和脉冲宽度。
+独立联调程序为 `hardware/io64/test.m`；它不启动游戏，按原脚本每秒发送
+一个递增事件码（1–100），每次保持 4 ms 后归零。
 
 `send_marker.m` 的默认流程：
 
@@ -160,6 +167,16 @@ fourinarow_ptb/ (repository root)
     marker_name_to_code.m
     emit_marker.m
     send_marker.m
+
+  hardware/
+    README.md
+    io64/
+      test.m
+      config_io.m
+      inp.m
+      outp.m
+      io64.mexw64
+      inpoutx64.dll
 
   logging/
     init_trial_log.m
